@@ -1,26 +1,24 @@
 package main
 
 import (
-	"gocv.io/x/gocv"
-	"image"
-	"log"
-	"sync"
-	"time"
-	"web"
+	"fmt"
+	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/gin"
+	"os"
 )
 
 func main() {
-	//r := gin.Default()
-	//
-	//r.Use(static.Serve("/", static.LocalFile("./react", true)))
-	//
-	//port, ok := os.LookupEnv("PORT")
-	//if !ok {
-	//	port = "80"
-	//}
+	r := gin.Default()
 
-	//r.Run(fmt.Sprintf(":%s", port))
-	//
+	r.Use(static.Serve("/", static.LocalFile("./react", true)))
+
+	port, ok := os.LookupEnv("PORT")
+	if !ok {
+		port = "80"
+	}
+
+	r.Run(fmt.Sprintf(":%s", port))
+
 	//mat := gocv.IMRead("./sample-tab-images/tab-1024-768-1.png", 1)
 	//shoes := gocv.IMRead("./resized-item-images/2003.png", 1)
 	//mat2Col := mat.Cols() - shoes.Cols() +1
@@ -38,47 +36,47 @@ func main() {
 	//gocv.Circle(&mat, miloc, 20, red, 8)
 	//gocv.Circle(&mat, maloc, 20, blue, 8)
 
-	window := gocv.NewWindow("mat")
-	defer window.Close()
-	tabwindow := gocv.NewWindow("tab")
-	defer tabwindow.Close()
-
-	//origin := gocv.IMRead("./sample-tab-images/tab-3360-2100-1.png", 1)
-	origin := gocv.IMRead("./sample-tab-images/tab-1024-768-1.png", 1)
-	cols := origin.Cols() / (origin.Cols()/ 1024)
-	rows := origin.Rows() / (origin.Cols() / cols)
-	tab := gocv.NewMatWithSize(rows, cols, 1)
-	gocv.Resize(origin, &tab, image.Point{X:cols, Y:rows}, 0, 0, 0)
-	mat := gocv.NewMatWithSize(tab.Cols(), tab.Rows(), 1)
-	tab.CopyTo(&mat)
-
-	var wg sync.WaitGroup
-	start := time.Now()
-
-	ch := make(chan int)
-	for i := 0; i<30; i++{
-		go func() {
-			for no := range ch {
-				wg.Add(1)
-				web.MarkItemByNo(tab, &mat, no)
-				wg.Done()
-			}
-		}()
-	}
-	for no := 1000; no < 5000; no++ {
-		if !web.IsExistItemByNo(no) {
-			continue
-		}
-		ch <- no
-	}
-	close(ch)
-	wg.Wait()
-	end := time.Now()
-	log.Println(end.Unix() - start.Unix())
-
-	window.IMShow(mat)
-	//tabwindow.IMShow(tab)
-	window.WaitKey(0)
+	//window := gocv.NewWindow("mat")
+	//defer window.Close()
+	//tabwindow := gocv.NewWindow("tab")
+	//defer tabwindow.Close()
+	//
+	////origin := gocv.IMRead("./sample-tab-images/tab-3360-2100-1.png", 1)
+	//origin := gocv.IMRead("./sample-tab-images/tab-1024-768-1.png", 1)
+	//cols := origin.Cols() / (origin.Cols()/ 1024)
+	//rows := origin.Rows() / (origin.Cols() / cols)
+	//tab := gocv.NewMatWithSize(rows, cols, 1)
+	//gocv.Resize(origin, &tab, image.Point{X:cols, Y:rows}, 0, 0, 0)
+	//mat := gocv.NewMatWithSize(tab.Cols(), tab.Rows(), 1)
+	//tab.CopyTo(&mat)
+	//
+	//var wg sync.WaitGroup
+	//start := time.Now()
+	//
+	//ch := make(chan int)
+	//for i := 0; i<30; i++{
+	//	go func() {
+	//		for no := range ch {
+	//			wg.Add(1)
+	//			web.MarkItemByNo(tab, &mat, no)
+	//			wg.Done()
+	//		}
+	//	}()
+	//}
+	//for no := 1000; no < 5000; no++ {
+	//	if !web.IsExistItemByNo(no) {
+	//		continue
+	//	}
+	//	ch <- no
+	//}
+	//close(ch)
+	//wg.Wait()
+	//end := time.Now()
+	//log.Println(end.Unix() - start.Unix())
+	//
+	//window.IMShow(mat)
+	////tabwindow.IMShow(tab)
+	//window.WaitKey(0)
 
 
 
