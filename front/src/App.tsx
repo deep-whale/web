@@ -4,6 +4,7 @@ import {Layout, Menu} from "antd";
 import {Main} from "./Main";
 import styled from 'styled-components';
 import {About} from "./About";
+import {GA} from "./GA";
 
 const {Header, Footer, Content} = Layout;
 
@@ -26,6 +27,11 @@ const App = () => {
                             </Link>
                         </Menu.Item>
                         <Menu.Item key="2">
+                            <Link to="/ga">
+                                유전알고리즘 챔피언 조합 추천
+                            </Link>
+                        </Menu.Item>
+                        <Menu.Item key="3">
                             <Link to="/about">
                                 만든이
                             </Link>
@@ -34,6 +40,9 @@ const App = () => {
                 </Header>
                 <Content>
                     <Switch>
+                        <Route path="/ga">
+                            <GA/>
+                        </Route>
                         <Route path="/about">
                             <About/>
                         </Route>

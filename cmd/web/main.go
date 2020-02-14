@@ -1,14 +1,49 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
+	"net/http"
 	"os"
 )
 
+type GAResponse struct {
+	BestFitness float64
+	WorstFitness float64
+	Genes [][]int
+}
+
 func main() {
 	r := gin.Default()
+
+	r.GET("/best-champions", func(c *gin.Context) {
+		var p struct {
+			SizePopulation int `json:"sizePopulation"`
+			NumGeneration int `json:"numGeneration"`
+		}
+		c.BindQuery(&p)
+
+		//res, err := http.Get(os.Getenv("GA_HOST") + "/best-champions" + fmt.Sprintf("?SizePopulation=%v&NumGeneration=%v", p.SizePopulation, p.NumGeneration))
+		res, err := http.Get("http://localhost:81/best-champions" + fmt.Sprintf("?SizePopulation=%v&NumGeneration=%v", p.SizePopulation, p.NumGeneration))
+		if err != nil {
+			c.JSON(400, &gin.H{
+				"msg": err.Error(),
+			})
+			return
+		}
+		defer res.Body.Close()
+		b, _ := ioutil.ReadAll(res.Body)
+		var j GAResponse
+		json.Unmarshal(b, &j)
+		c.JSON(200, &gin.H{
+			"bestFitness": j.BestFitness,
+			"worstFitness": j.WorstFitness,
+			"genes": j.Genes,
+		})
+	})
 
 	r.Use(static.Serve("/", static.LocalFile("./react", true)))
 

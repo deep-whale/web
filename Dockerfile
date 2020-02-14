@@ -15,6 +15,6 @@ RUN go build -ldflags="-w -s" -v github.com/deep-whale/web/cmd/web/
 
 FROM alpine
 COPY --from=go /web /web
-COPY --from=node /front/build /react
+COPY --from=node /build /react
 EXPOSE 80
 ENTRYPOINT ["/web"]
