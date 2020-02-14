@@ -26,8 +26,8 @@ func main() {
 		}
 		c.BindQuery(&p)
 
-		//res, err := http.Get(os.Getenv("GA_HOST") + "/best-champions" + fmt.Sprintf("?SizePopulation=%v&NumGeneration=%v", p.SizePopulation, p.NumGeneration))
-		res, err := http.Get("http://localhost:81/best-champions" + fmt.Sprintf("?SizePopulation=%v&NumGeneration=%v", p.SizePopulation, p.NumGeneration))
+		res, err := http.Get(os.Getenv("GA_HOST") + "/best-champions" + fmt.Sprintf("?SizePopulation=%v&NumGeneration=%v", p.SizePopulation, p.NumGeneration))
+		//res, err := http.Get("http://localhost:81/best-champions" + fmt.Sprintf("?SizePopulation=%v&NumGeneration=%v", p.SizePopulation, p.NumGeneration))
 		if err != nil {
 			c.JSON(400, &gin.H{
 				"msg": err.Error(),
